@@ -1,16 +1,4 @@
-# pet_network
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<h1>Projeto Pet Social </h1>
+<h3>Projeto em desenvolvimento </h3>
+<p>Projeto pesssoal idealizando uma rede social voltado ao mundo pet onde tutores criam perfis para seus amigos de 
+4 patas, e troca likes com os pets. </p>
