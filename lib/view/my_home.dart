@@ -7,6 +7,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:pet_network/models/post_model.dart';
 import 'package:pet_network/routes.dart';
 import 'package:pet_network/view/create_post/create_post_screen.dart';
+import 'package:pet_network/view/explorar.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key,});
@@ -109,43 +110,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
   }
+ 
 
-  Widget _buildBottomNavBar() {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
-        child: GNav(
-            rippleColor: Colors.grey,
-            hoverColor: Colors.grey,
-            gap: 8,
-            activeColor: Colors.black,
-            iconSize: 24,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            duration: const Duration(milliseconds: 100),
-            haptic: true,
-            curve: Curves.easeInOutExpo,
-            tabActiveBorder: Border.all(color: Colors.black, width: 1),
-            tabs: const [
-              GButton(
-                icon: LineIcons.home,
-                text: 'Home',
-              ),
-              GButton(
-                icon: LineIcons.search,
-                text: 'Explorar',
-              ),
-              GButton(
-                icon: LineIcons.bell,
-                text: 'notificacoes',
-              ),
-              GButton(
-                icon: LineIcons.user,
-                text: 'Perfil',
-              ),
-            ]),
-      ),
-    );
-  }
+  
 
   Widget _buildBody() {
     if (_posts.isEmpty) {
@@ -243,7 +210,6 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       appBar: _buildAppBar(),
-      bottomNavigationBar: _buildBottomNavBar(),
       body: _buildBody(),
     );
   }

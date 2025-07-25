@@ -22,10 +22,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'PetSocial',
       theme: ThemeData(
-        
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+        primaryColor: Colors.blue,
+        primaryColorLight: Colors.blueAccent,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
       ),
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.splash,
       routes: AppRoutes.routes,
     );
   }

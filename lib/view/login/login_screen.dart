@@ -5,6 +5,7 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _LoginScreenState createState() => _LoginScreenState();
 }
 
@@ -33,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
             _passwordController.text == 'senha123') {
           if (!mounted) return;
           // Navega para a tela principal em caso de sucesso
-          Navigator.pushReplacementNamed(context, '/home');
+          Navigator.pushReplacementNamed(context, '/homeapp');
         } else {
           throw 'Credenciais inválidas. Tente novamente.';
         }
@@ -60,6 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200],
     
       // Cor de fundo semelhante ao exemplo do React
       body: Center(
@@ -67,11 +69,14 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             children: [
-              Image.asset("assets/images/logo.png"),
-              SizedBox(height: 24.0),
+              Hero(
+                tag: 'logo',
+                child: Image.asset("assets/images/logo.png", scale: 1.5,)),
+              SizedBox(height: 16.0),
               Form(
                 key: _formKey,
                 child: Card(
+                  color: Colors.grey[50],
                   elevation: 8.0, // Sombreamento semelhante ao shadow-md do Tailwind
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0), // Valor arredondado semelhante ao rounded-lg
@@ -203,7 +208,7 @@ class _EmailInputField extends StatelessWidget {
             return null;
           },
           decoration: InputDecoration(
-            fillColor: Colors.grey[300],
+            fillColor: Colors.white,
             filled: true,
             hintText: 'seuemail@exemplo.com',
             border: OutlineInputBorder(
@@ -361,7 +366,7 @@ class _PasswordInputField extends StatelessWidget {
             return null;
           },
           decoration: InputDecoration(
-            fillColor: Colors.grey[300],
+            fillColor: Colors.white,
             filled: true,
             hintText: 'Sua senha',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
