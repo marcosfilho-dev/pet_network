@@ -1,13 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:pet_network/models/post_model.dart';
 import 'package:pet_network/routes.dart';
 import 'package:pet_network/view/create_post/create_post_screen.dart';
-import 'package:pet_network/view/explorar.dart';
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key,});

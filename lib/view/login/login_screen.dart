@@ -66,62 +66,68 @@ class _LoginScreenState extends State<LoginScreen> {
       // Cor de fundo semelhante ao exemplo do React
       body: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            children: [
-              Hero(
-                tag: 'logo',
-                child: Image.asset("assets/images/logo.png", scale: 1.5,)),
-              SizedBox(height: 16.0),
-              Form(
-                key: _formKey,
-                child: Card(
-                  color: Colors.grey[50],
-                  elevation: 8.0, // Sombreamento semelhante ao shadow-md do Tailwind
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0), // Valor arredondado semelhante ao rounded-lg
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Column(
-              
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          'Entrar no PetSocial',
-                          style: TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[900], // Cor do texto semelhante ao text-gray-900
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 500, // Define uma largura máxima para o conteúdo
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+               Align(
+                 alignment: Alignment.topCenter,
+                   child: Image.asset("assets/images/logo.png", scale: 2)),
+               // const SizedBox(height: 16.0),
+                Form(
+                  key: _formKey,
+                  child: Card(
+                    color: Colors.grey[50],
+                    elevation: 8.0, // Sombreamento semelhante ao shadow-md do Tailwind
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          30.0), // Valor arredondado semelhante ao rounded-lg
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            'Entrar no PetSocial',
+                            style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[900], // Cor do texto semelhante ao text-gray-900
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 16.0),
-                        if (_errorMessage != null)
-                          _buildErrorAlert(), // Exibe o alerta de erro
-                        SizedBox(height: 16.0),
-                        _EmailInputField(
-                          controller: _emailController,
-                          isLoading: _isLoading,
-                          errorMessage: _errorMessage,
-                        ),
-                        SizedBox(height: 12.0),
-                        _PasswordInputField(
-                          controller: _passwordController,
-                          isLoading: _isLoading,
-                          errorMessage: _errorMessage,
-                        ),
-                        SizedBox(height: 24.0),
-                        _LoginButton(isLoading: _isLoading, onPressed: _login),
-                        SizedBox(height: 16.0),
-                        const _ForgotPasswordLink(),
-                        SizedBox(height: 12.0),
-                        const _SignUpLink(),
-                      ],
+                          const SizedBox(height: 16.0),
+                          if (_errorMessage != null)
+                            _buildErrorAlert(), // Exibe o alerta de erro
+                          const SizedBox(height: 16.0),
+                          _EmailInputField(
+                            controller: _emailController,
+                            isLoading: _isLoading,
+                            errorMessage: _errorMessage,
+                          ),
+                          const SizedBox(height: 12.0),
+                          _PasswordInputField(
+                            controller: _passwordController,
+                            isLoading: _isLoading,
+                            errorMessage: _errorMessage,
+                          ),
+                          const SizedBox(height: 24.0),
+                          _LoginButton(isLoading: _isLoading, onPressed: _login),
+                          const SizedBox(height: 16.0),
+                          const _ForgotPasswordLink(),
+                          const SizedBox(height: 12.0),
+                          const _SignUpLink(),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -131,8 +137,8 @@ class _LoginScreenState extends State<LoginScreen> {
   // Método para construir o alerta de erro
   Widget _buildErrorAlert() {
     return Container(
-      padding: EdgeInsets.all(8.0),
-      margin: EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.only(bottom: 8.0),
       decoration: BoxDecoration(
         color: Colors.red[100], // Cor de fundo do alerta
         borderRadius: BorderRadius.circular(5.0),
@@ -140,8 +146,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline, color: Colors.red[600]),
-          SizedBox(width: 8.0),
+          Icon(Icons.error_outline, color: Colors.red[600]), // Cor do ícone
+          const SizedBox(width: 8.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +200,7 @@ class _EmailInputField extends StatelessWidget {
             color: Colors.grey[700],
           ),
         ),
-        SizedBox(height: 4.0),
+        const SizedBox(height: 4.0),
         TextFormField(
           controller: controller,
           keyboardType: TextInputType.emailAddress,
@@ -355,7 +361,7 @@ class _PasswordInputField extends StatelessWidget {
             color: Colors.grey[700],
           ),
         ),
-        SizedBox(height: 4.0),
+        const SizedBox(height: 4.0),
         TextFormField(
           controller: controller,
           obscureText: true,

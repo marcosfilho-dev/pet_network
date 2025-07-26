@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:pet_network/home_app.dart';
 import 'package:pet_network/main.dart';
 import 'package:pet_network/view/camera/camera_screen.dart';
