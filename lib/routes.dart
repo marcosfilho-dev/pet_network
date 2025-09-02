@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pet_network/home_app.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pet_network/main.dart';
 import 'package:pet_network/view/camera/camera_screen.dart';
 import 'package:pet_network/view/explorar.dart';
@@ -21,10 +22,13 @@ class AppRoutes {
     return {
       login: (context) => LoginScreen(),
       home: (context) => const MyHomePage(),
-      camera: (context) => CameraScreen(cameras: cameras),
+      camera: (context) => Consumer( 
+        builder: (context, ref, child) {
+          return CameraScreen(cameras: ref.watch(camerasProvider).valueOrNull ?? []);
+        }),
       splash: (context) => SplashScreen(),
-      explorar: (context) => Explorar_view(),
-      homeapp: (context) => Home_app(),
+      explorar: (context) => ExplorePage(),
+      homeapp: (context) => HomeApp(),
     };
   }
 }

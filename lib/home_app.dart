@@ -3,15 +3,19 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:pet_network/view/explorar.dart';
 import 'package:pet_network/view/my_home.dart';
+import 'package:pet_network/view/notificacoes.dart';
+import 'package:pet_network/view/perfil.dart';
 
-class Home_app extends StatefulWidget {
-  const Home_app({super.key});
+
+// ignore: camel_case_types
+class HomeApp extends StatefulWidget {
+  const HomeApp({super.key});
 
   @override
-  State<Home_app> createState() => _Home_appState();
+  State<HomeApp> createState() => _HomeAppState();
 }
 
-class _Home_appState extends State<Home_app> {
+class _HomeAppState extends State<HomeApp> {
 
   Widget _buildBottomNavBar() {
     return SafeArea(
@@ -47,6 +51,9 @@ class _Home_appState extends State<Home_app> {
                 icon: LineIcons.user,
                 text: 'Perfil',
               ),
+              // Exemplo de como ficaria na sua lista de GButton
+              
+              
             ],
             selectedIndex: _selectedIndex,
             onTabChange: (index) {
@@ -62,7 +69,10 @@ class _Home_appState extends State<Home_app> {
   int _selectedIndex = 0;
   static const List<Widget> _screens = <Widget>[
     MyHomePage(),
-    Explorar_view(),
+    ExplorePage(),
+    NotificationsPage(),
+    ProfilePage(),
+    
   ];
   @override
   Widget build(BuildContext context) {

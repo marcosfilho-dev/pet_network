@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pet_network/view/login/login_controller.dart';
+import 'package:pet_network/async_value_ui.dart';
 
-
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
@@ -9,44 +12,20 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isLoading = false;
-  String? _errorMessage;
 
   // Função para realizar o login
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-        _errorMessage = null; // Limpa qualquer mensagem de erro anterior
-      });
-
-      // Simula uma chamada assíncrona para autenticação (substitua com sua lógica real)
-      try {
-        // Simula um atraso de 2 segundos
-        await Future.delayed(Duration(seconds: 2));
-
-        // Simula sucesso ou falha na autenticação
-        if (_emailController.text == 'teste@email.com' &&
-            _passwordController.text == 'senha123') {
-          if (!mounted) return;
-          // Navega para a tela principal em caso de sucesso
-          Navigator.pushReplacementNamed(context, '/homeapp');
-        } else {
-          throw 'Credenciais inválidas. Tente novamente.';
-        }
-      } catch (error) {
-        setState(() {
-          _errorMessage = error.toString();
-        });
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      // Chama o método de login no nosso novo controller
+      ref.read(loginControllerProvider.notifier).login(
+            _emailController.text,
+            _passwordController.text,
+          );
+      // A navegação será tratada automaticamente pelo GoRouter!
     }
   }
 
@@ -60,6 +39,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 1. Ouve o estado do controller para exibir erros com nosso helper
+    ref.listen<AsyncValue>(
+      loginControllerProvider,
+      (_, state) => state.showAlertDialogOnError(context),
+    );
+    // 2. Observa o estado para saber se está carregando
+    final state = ref.watch(loginControllerProvider);
+    final isLoading = state.isLoading;
     return Scaffold(
       backgroundColor: Colors.grey[200],
     
@@ -72,11 +59,9 @@ class _LoginScreenState extends State<LoginScreen> {
               maxWidth: 500, // Define uma largura máxima para o conteúdo
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-               Align(
-                 alignment: Alignment.topCenter,
-                   child: Image.asset("assets/images/logo.png", scale: 2)),
+               Image.asset("assets/images/logo.png", scale: 2),
                // const SizedBox(height: 16.0),
                 Form(
                   key: _formKey,
@@ -101,22 +86,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: 16.0),
-                          if (_errorMessage != null)
-                            _buildErrorAlert(), // Exibe o alerta de erro
-                          const SizedBox(height: 16.0),
                           _EmailInputField(
                             controller: _emailController,
-                            isLoading: _isLoading,
-                            errorMessage: _errorMessage,
+                            isLoading: isLoading,
                           ),
                           const SizedBox(height: 12.0),
                           _PasswordInputField(
                             controller: _passwordController,
-                            isLoading: _isLoading,
-                            errorMessage: _errorMessage,
+                            isLoading: isLoading,
                           ),
                           const SizedBox(height: 24.0),
-                          _LoginButton(isLoading: _isLoading, onPressed: _login),
+                          _LoginButton(isLoading: isLoading, onPressed: _login),
                           const SizedBox(height: 16.0),
                           const _ForgotPasswordLink(),
                           const SizedBox(height: 12.0),
@@ -133,59 +113,14 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
-  // Método para construir o alerta de erro
-  Widget _buildErrorAlert() {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      margin: const EdgeInsets.only(bottom: 8.0),
-      decoration: BoxDecoration(
-        color: Colors.red[100], // Cor de fundo do alerta
-        borderRadius: BorderRadius.circular(5.0),
-        border: Border.all(color: Colors.red[400]!),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.error_outline, color: Colors.red[600]), // Cor do ícone
-          const SizedBox(width: 8.0),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Erro',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red[800],
-                  ),
-                ),
-                Text(
-                  _errorMessage!,
-                  style: TextStyle(
-                    color: Colors.red[700],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
 }
 
 // Widget extraído para o campo de Email
 class _EmailInputField extends StatelessWidget {
-  const _EmailInputField({
-    required this.controller,
-    required this.isLoading,
-    this.errorMessage,
-  });
+  const _EmailInputField({required this.controller, required this.isLoading});
 
   final TextEditingController controller;
   final bool isLoading;
-  final String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -220,18 +155,6 @@ class _EmailInputField extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(5.0),
             ),
-            errorBorder: errorMessage != null
-                ? OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red[500]!),
-                    borderRadius: BorderRadius.circular(5.0),
-                  )
-                : null,
-            focusedErrorBorder: errorMessage != null
-                ? OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red[500]!),
-                    borderRadius: BorderRadius.circular(5.0),
-                  )
-                : null,
           ),
           enabled: !isLoading,
         ),
@@ -320,8 +243,8 @@ class _SignUpLink extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            // Adicione a lógica para navegação para a tela de cadastro
-            debugPrint('Cadastre-se');
+            // Navega para a tela de cadastro usando GoRouter
+            context.go('/signup');
           },
           child: const Text(
             'Cadastre-se',
@@ -338,15 +261,10 @@ class _SignUpLink extends StatelessWidget {
 
 // Widget extraído para o campo de Senha
 class _PasswordInputField extends StatelessWidget {
-  const _PasswordInputField({
-    required this.controller,
-    required this.isLoading,
-    this.errorMessage,
-  });
+  const _PasswordInputField({required this.controller, required this.isLoading});
 
   final TextEditingController controller;
   final bool isLoading;
-  final String? errorMessage;
 
   @override
   Widget build(BuildContext context) {

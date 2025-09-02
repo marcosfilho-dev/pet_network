@@ -1,215 +1,172 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:pet_network/models/post_model.dart';
-import 'package:pet_network/routes.dart';
-import 'package:pet_network/view/create_post/create_post_screen.dart';
+import 'package:pet_network/models/data.dart';
+import 'package:pet_network/models/pets_post.dart';
+import 'package:pet_network/view/widgets/pet_post_widget.dart';
 
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key,});
-
-
-  
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  final List<Post> _posts = [];
-
-  Future<void> _showImageSourceDialog() async {
-    // Mostra um diálogo para o usuário escolher entre câmera e galeria
-    await showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.photo_camera),
-                title: const Text('Tirar Foto'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _getImage(ImageSource.camera);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Escolher da Galeria'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _getImage(ImageSource.gallery);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _getImage(ImageSource source) async {
-    Map<String, dynamic>? postData;
-
-    if (source == ImageSource.camera) {
-      final result = await Navigator.pushNamed(context, AppRoutes.camera);
-      if (result is Map<String, dynamic>) {
-        postData = result;
-      }
-    } else {
-      final pickedFile = await ImagePicker().pickImage(source: source);
-      if (pickedFile != null) {
-        if (!mounted) return;
-        // Navega para a tela de criação de post e aguarda o resultado
-        final result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CreatePostScreen(image: pickedFile)),
-        );
-        if (result is Map<String, dynamic>) {
-          postData = result;
-        }
-      }
-    }
-
-    if (postData != null) {
-      final newPost = Post(
-        image: postData['image'],
-        caption: postData['caption'],
-      );
-      setState(() {
-        _posts.insert(0, newPost);
-      });
-    }
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      title: const Padding(
-        padding: EdgeInsets.only(left: 16),
-        child: Text('PetSocial',
-            style:
-                TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-      ),
-      backgroundColor: Colors.white10,
-      centerTitle: false,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: IconButton(
-            iconSize: 35,
-            icon: const Icon(Icons.camera_alt_rounded, color: Colors.black),
-            onPressed: _showImageSourceDialog,
-          ),
-        ),
-      ],
-    );
-  }
- 
-
-  
-
-  Widget _buildBody() {
-    if (_posts.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40.0),
-          child: Text(
-            'Nenhuma postagem ainda. Toque na câmera para criar uma!',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, color: Colors.grey),
-          ),
-        ),
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(8.0),
-      itemCount: _posts.length,
-      itemBuilder: (context, index) {
-        final post = _posts[index];
-        return Card(
-          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-          elevation: 5,
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Imagem do post
-              Image.file(File(post.image.path)),
-
-              // Legenda do post
-              if (post.caption != null && post.caption!.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16.0,
-                    right: 16.0,
-                    top: 12.0,
-                    bottom: 4.0,
-                  ),
-                  child: Text(
-                    post.caption!,
-                    style: const TextStyle(color: Colors.black87),
-                  ),
-                ),
-              // Barra de ações (Curtir, Comentar, Compartilhar)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        // Atualiza o estado da curtida e reconstrói o widget
-                        setState(() {
-                          post.isLiked = !post.isLiked;
-                        });
-                      },
-                      icon: Icon(
-                        post.isLiked ? LineIcons.heartAlt : LineIcons.heart,
-                        color: post.isLiked ? Colors.red : null,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        // Lógica para adicionar um comentário
-                        debugPrint(
-                            'Botão de comentar pressionado no post $index');
-                      },
-                      icon: const Icon(LineIcons.comment),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        // Lógica para compartilhar o post
-                        debugPrint(
-                            'Botão de compartilhar pressionado no post $index');
-                      },
-                      icon: const Icon(LineIcons.share),
-                    ),
-                  ],
-                ),
-              ),
-
-            ],
-          ),
-        );
-      },
-    );
-  }
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      appBar: _buildAppBar(),
-      body: _buildBody(),
+      appBar: AppBar(
+        title: const Padding(
+          padding: EdgeInsets.only(left: 8),
+          child: Text('PetSocial',
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        centerTitle: false,
+        actions: [
+          IconButton(
+            icon: const Icon(LineIcons.plusSquare, color: Colors.black),
+            onPressed: () {
+              // TODO: Implementar fluxo de criação de post
+              print('Botão de criar post pressionado!');
+            },
+          ),
+          IconButton(
+            icon: const Icon(LineIcons.facebookMessenger, color: Colors.black),
+            onPressed: () {
+              // TODO: Implementar tela de mensagens
+              print('Botão de mensagens pressionado!');
+            },
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        itemCount: dummyPetPosts.length,
+        itemBuilder: (context, index) {
+          // Usamos o operador de módulo para ciclar pelos posts, criando um feed "infinito"
+          final post = dummyPetPosts[index % dummyPetPosts.length];
+          return _PostCard(post: post);
+        },
+      ),
+    );
+  }
+}
+
+/// Um widget de card para exibir um post completo no feed.
+class _PostCard extends StatefulWidget {
+  final PetPost post;
+  const _PostCard({required this.post});
+
+  @override
+  State<_PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<_PostCard> {
+  // O estado de 'curtido' e a contagem de likes são gerenciados localmente no card.
+  bool _isLiked = false;
+  late int _likesCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _likesCount = widget.post.likes;
+  }
+
+  void _toggleLike() {
+    setState(() {
+      if (_isLiked) {
+        _likesCount--;
+        _isLiked = false;
+      } else {
+        _likesCount++;
+        _isLiked = true;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+      elevation: 0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Cabeçalho do Post (Avatar e Nome)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 16,
+                  // Gera um avatar a partir da URL do post para manter a consistência
+                  backgroundImage: NetworkImage(widget.post.imageUrl),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  widget.post.petName,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+
+          // Imagem do post (usando o mesmo widget da tela Explorar)
+          PetPostWidget(post: widget.post),
+
+          // Barra de ações (Curtir, Comentar, Compartilhar)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: _toggleLike,
+                  icon: Icon(
+                    _isLiked ? LineIcons.heartAlt : LineIcons.heart,
+                    color: _isLiked ? Colors.red : null,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(LineIcons.comment),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(LineIcons.share),
+                ),
+              ],
+            ),
+          ),
+
+          // Contagem de curtidas e legenda
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '$_likesCount curtidas',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                RichText(
+                  text: TextSpan(
+                    style: DefaultTextStyle.of(context).style,
+                    children: [
+                      TextSpan(
+                        text: '${widget.post.petName} ',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const TextSpan(
+                          text: 'Olha que dia lindo para passear! 🐾 #doglife'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+      ),
     );
   }
 }
